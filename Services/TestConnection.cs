@@ -2,7 +2,7 @@ using System;
 using Microsoft.Data.SqlClient;
 using Test1.Config;
 
-namespace Test1
+namespace Test1.Services
 {
     /// <summary>
     /// Класс для тестирования подключения к базе данных
@@ -30,28 +30,22 @@ namespace Test1
                     
                     int tableCount = (int)command.ExecuteScalar();
                     
-                    Console.WriteLine($"Подключение успешно! Найдено таблиц: {tableCount}");
-                    
                     if (tableCount == 5)
                     {
-                        Console.WriteLine("✓ Все необходимые таблицы найдены!");
                         return true;
                     }
                     else
                     {
-                        Console.WriteLine($"⚠ Найдено только {tableCount} из 5 необходимых таблиц");
                         return false;
                     }
                 }
             }
-            catch (SqlException ex)
+            catch (SqlException)
             {
-                Console.WriteLine($"Ошибка подключения к SQL Server: {ex.Message}");
                 return false;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Console.WriteLine($"Общая ошибка: {ex.Message}");
                 return false;
             }
         }
@@ -68,7 +62,6 @@ namespace Test1
                     connection.Open();
                     
                     Console.WriteLine("\n=== Информация о базе данных ===");
-                    Console.WriteLine($"Строка подключения: {DatabaseConfig.ConnectionString}");
                     Console.WriteLine($"Сервер: {connection.DataSource}");
                     Console.WriteLine($"База данных: {connection.Database}");
                     Console.WriteLine($"Статус: {connection.State}");

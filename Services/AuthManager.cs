@@ -1,8 +1,7 @@
 using System;
 using System.Linq;
-// Временно закомментировано до генерации моделей через Scaffold-DbContext
-// using Test1.Data;
-// using Test1.Models;
+using Test1.Data;
+using Test1.Models;
 using Test1.Services;
 
 namespace Test1
@@ -49,18 +48,14 @@ namespace Test1
 
         /// <summary>
         /// Авторизация пользователя по имени пользователя и паролю
-        /// TODO: Раскомментировать после Scaffold-DbContext
         /// </summary>
         public static bool Login(string username, string password)
         {
-            // Временно отключено до Scaffold-DbContext
-            return false;
-            /*
             try
             {
                 using (var context = new ApplicationDbContext())
                 {
-                    var user = context.Users.FirstOrDefault(u => u.Username == username);
+                    var user = context.CpUsers.FirstOrDefault(u => u.Username == username);
                     
                     if (user == null || !PasswordHasher.VerifyPassword(password, user.PasswordHash))
                     {
@@ -81,29 +76,24 @@ namespace Test1
             {
                 return false;
             }
-            */
         }
 
         /// <summary>
         /// Регистрация нового пользователя
-        /// TODO: Раскомментировать после Scaffold-DbContext
         /// </summary>
         public static bool Register(string username, string email, string password, string? fullName = null, string? phone = null)
         {
-            // Временно отключено до Scaffold-DbContext
-            return false;
-            /*
             try
             {
                 using (var context = new ApplicationDbContext())
                 {
                     // Проверяем, существует ли пользователь с таким именем или email
-                    if (context.Users.Any(u => u.Username == username || u.Email == email))
+                    if (context.CpUsers.Any(u => u.Username == username || u.Email == email))
                     {
                         return false;
                     }
 
-                    var newUser = new User
+                    var newUser = new CpUser
                     {
                         Username = username,
                         Email = email,
@@ -113,7 +103,7 @@ namespace Test1
                         Role = "customer"
                     };
 
-                    context.Users.Add(newUser);
+                    context.CpUsers.Add(newUser);
                     context.SaveChanges();
 
                     // Автоматически входим после регистрации
@@ -131,18 +121,13 @@ namespace Test1
             {
                 return false;
             }
-            */
         }
 
         /// <summary>
         /// Обновление данных пользователя
-        /// TODO: Раскомментировать после Scaffold-DbContext
         /// </summary>
         public static bool UpdateUser(string? fullName, string email, string? phone)
         {
-            // Временно отключено до Scaffold-DbContext
-            return false;
-            /*
             if (!_isLoggedIn || !_currentUserId.HasValue)
                 return false;
 
@@ -150,12 +135,12 @@ namespace Test1
             {
                 using (var context = new ApplicationDbContext())
                 {
-                    var user = context.Users.FirstOrDefault(u => u.UserId == _currentUserId.Value);
+                    var user = context.CpUsers.FirstOrDefault(u => u.UserId == _currentUserId.Value);
                     if (user == null)
                         return false;
 
                     // Проверяем, не занят ли email другим пользователем
-                    if (context.Users.Any(u => u.Email == email && u.UserId != _currentUserId.Value))
+                    if (context.CpUsers.Any(u => u.Email == email && u.UserId != _currentUserId.Value))
                         return false;
 
                     user.FullName = fullName;
@@ -176,18 +161,13 @@ namespace Test1
             {
                 return false;
             }
-            */
         }
 
         /// <summary>
         /// Загрузка данных пользователя из БД
-        /// TODO: Раскомментировать после Scaffold-DbContext
         /// </summary>
         public static void LoadUserData()
         {
-            // Временно отключено до Scaffold-DbContext
-            return;
-            /*
             if (!_isLoggedIn || !_currentUserId.HasValue)
                 return;
 
@@ -195,7 +175,7 @@ namespace Test1
             {
                 using (var context = new ApplicationDbContext())
                 {
-                    var user = context.Users.FirstOrDefault(u => u.UserId == _currentUserId.Value);
+                    var user = context.CpUsers.FirstOrDefault(u => u.UserId == _currentUserId.Value);
                     if (user != null)
                     {
                         _currentUser = user.Username;
@@ -209,7 +189,6 @@ namespace Test1
             {
                 // Игнорируем ошибки при загрузке
             }
-            */
         }
 
         public static void Logout()

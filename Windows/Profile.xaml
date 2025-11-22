@@ -195,16 +195,28 @@
                              BorderThickness="1"
                              Background="White"/>
                     
-                    <!-- Кнопка сохранения -->
-                    <Button x:Name="SaveButton"
-                            Content="Сохранить изменения" 
-                            Background="#3B82F6" 
-                            Foreground="White" 
-                            FontSize="16" 
-                            FontWeight="SemiBold" 
-                            Padding="16,12" 
-                            Cursor="Hand"
-                            Click="SaveButton_Click"/>
+                    <!-- Кнопки -->
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
+                        <Button x:Name="SaveButton"
+                                Content="Сохранить изменения" 
+                                Background="#3B82F6" 
+                                Foreground="White" 
+                                FontSize="16" 
+                                FontWeight="SemiBold" 
+                                Padding="16,12" 
+                                Cursor="Hand"
+                                Margin="0,0,12,0"
+                                Click="SaveButton_Click"/>
+                        
+                        <Button Content="На главную" 
+                                Background="#6B7280" 
+                                Foreground="White" 
+                                FontSize="16" 
+                                FontWeight="SemiBold" 
+                                Padding="16,12" 
+                                Cursor="Hand"
+                                Click="BackToMainFromProfileButton_Click"/>
+                    </StackPanel>
                 </StackPanel>
                 </StackPanel>
             </Grid>
@@ -262,7 +274,17 @@
                         FontWeight="SemiBold" 
                         Padding="16,12" 
                         Cursor="Hand"
+                        Margin="0,0,0,12"
                         Click="RegisterButton_Click"/>
+                    
+                <Button Content="На главную" 
+                        Background="#6B7280" 
+                        Foreground="White" 
+                        FontSize="16" 
+                        FontWeight="SemiBold" 
+                        Padding="16,12" 
+                        Cursor="Hand"
+                        Click="BackToMainButton_Click"/>
                     
                 <TextBlock x:Name="ErrorMessage" 
                            Foreground="Red" 

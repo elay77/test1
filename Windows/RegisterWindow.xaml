@@ -79,14 +79,14 @@
                         Margin="0,0,0,12"
                         Click="RegisterButton_Click"/>
                 
-                <Button Content="Отмена" 
+                <Button Content="На главную" 
                         Background="#6B7280" 
                         Foreground="White" 
                         FontSize="16" 
                         FontWeight="SemiBold" 
                         Padding="16,12" 
                         Cursor="Hand"
-                        Click="CancelButton_Click"/>
+                        Click="BackToMainButton_Click"/>
                 
                 <TextBlock x:Name="ErrorMessage" 
                            Foreground="Red" 

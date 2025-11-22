@@ -5,9 +5,8 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using Test1.Services;
-// Временно закомментировано до генерации моделей
-// using Test1.Data;
-// using Test1.Models;
+using Test1.Data;
+using Test1.Models;
 
 namespace Test1
 {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Windows;
+using Test1.Services;
 
 namespace Test1
 {
@@ -13,7 +14,7 @@ namespace Test1
             base.OnStartup(e);
             
             // Проверяем подключение к базе данных при запуске
-            bool connectionOk = TestConnection.TestDatabaseConnection();
+            bool connectionOk = Services.TestConnection.TestDatabaseConnection();
             
             if (!connectionOk)
             {
@@ -28,6 +29,10 @@ namespace Test1
                     MessageBoxButton.OK,
                     MessageBoxImage.Warning);
             }
+            
+            // Открываем главное окно программно
+            var mainWindow = new MainWindow();
+            mainWindow.Show();
         }
     }
 

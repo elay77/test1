@@ -1,5 +1,6 @@
 using System;
 using System.Windows;
+using Test1.Services;
 
 namespace Test1
 {
@@ -70,9 +71,24 @@ namespace Test1
             }
         }
 
-        private void CancelButton_Click(object sender, RoutedEventArgs e)
+        private void BackToMainButton_Click(object sender, RoutedEventArgs e)
         {
-            DialogResult = false;
+            // Находим или создаем главное окно
+            MainWindow? mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            
+            if (mainWindow != null)
+            {
+                // Если главное окно уже открыто, активируем его
+                mainWindow.Activate();
+                mainWindow.Focus();
+            }
+            else
+            {
+                // Если главного окна нет, создаем новое
+                mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+            
             Close();
         }
 

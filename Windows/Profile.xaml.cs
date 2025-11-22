@@ -11,6 +11,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
+using Test1.Services;
 
 namespace Test1
 {
@@ -182,6 +183,48 @@ namespace Test1
                 // После успешной регистрации обновляем UI
                 UpdateUI();
             }
+        }
+
+        private void BackToMainButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Находим или создаем главное окно
+            MainWindow? mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            
+            if (mainWindow != null)
+            {
+                // Если главное окно уже открыто, активируем его
+                mainWindow.Activate();
+                mainWindow.Focus();
+            }
+            else
+            {
+                // Если главного окна нет, создаем новое
+                mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+            
+            Close();
+        }
+
+        private void BackToMainFromProfileButton_Click(object sender, RoutedEventArgs e)
+        {
+            // Находим или создаем главное окно
+            MainWindow? mainWindow = Application.Current.Windows.OfType<MainWindow>().FirstOrDefault();
+            
+            if (mainWindow != null)
+            {
+                // Если главное окно уже открыто, активируем его
+                mainWindow.Activate();
+                mainWindow.Focus();
+            }
+            else
+            {
+                // Если главного окна нет, создаем новое
+                mainWindow = new MainWindow();
+                mainWindow.Show();
+            }
+            
+            Close();
         }
 
         private void ShowError(string message)
