@@ -1,0 +1,131 @@
+﻿<Window x:Class="Test1.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Test1"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="450" Width="800">
+    <Grid>
+        <!-- Основной контейнер -->
+        <Border BorderBrush="#3B82F6" BorderThickness="2" CornerRadius="8" Margin="16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <!-- Верхняя панель: хлебные крошки и кнопки -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="24,16,0,0">
+                        <TextBlock Text="Главная страница / Каталог" Foreground="#3B82F6" FontSize="14" FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,16,24,0">
+                        <Button Content="Проверить БД" 
+                                Background="#10B981" Foreground="White" 
+                                Padding="16,8" Margin="0,0,8,0"
+                                FontSize="14" FontWeight="SemiBold" 
+                                Cursor="Hand"
+                                Click="TestConnectionButton_Click" />
+                        <Button Content="Корзина" 
+                                Background="#1F2937" Foreground="White" 
+                                Padding="16,8" Margin="0,0,8,0"
+                                FontSize="14" FontWeight="SemiBold" 
+                                Cursor="Hand"
+                                Click="CartButton_Click" />
+                        <Button Content="Профиль" 
+                                Background="#1F2937" Foreground="White" 
+                                Padding="16,8" 
+                                FontSize="14" FontWeight="SemiBold" 
+                                Cursor="Hand"
+                                Click="ProfileButton_Click" />
+                    </StackPanel>
+
+                    <!-- Основная разметка: левая панель + основной контент -->
+                    <Grid Margin="0,50,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="240"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Левая панель -->
+                    <Border Background="White" Padding="16" CornerRadius="8">
+                        <StackPanel>
+                            <!-- Логотип / заголовок -->
+                            <TextBlock Text="ЕКО ШОП" FontWeight="Bold" FontSize="18" Margin="0,0,0,24"/>
+
+                            <!-- Поиск -->
+                            <StackPanel Margin="0,0,0,32">
+                                <TextBlock Text="Поиск" FontWeight="Bold" Margin="0,0,0,8"/>
+                                <TextBox x:Name="SearchTextBox" 
+                                         FontSize="14" 
+                                         Padding="12,8" 
+                                         Margin="0,0,0,8"
+                                         BorderBrush="#D1D5DB" 
+                                         BorderThickness="1"
+                                         KeyDown="SearchTextBox_KeyDown"
+                                         TextChanged="SearchTextBox_TextChanged"/>
+                                <Button Content="Найти" 
+                                        Background="#3B82F6" 
+                                        Foreground="White"
+                                        Padding="12,8" 
+                                        FontSize="14" 
+                                        FontWeight="SemiBold" 
+                                        Cursor="Hand"
+                                        BorderThickness="0"
+                                        Click="SearchButton_Click"/>
+                            </StackPanel>
+
+                            <!-- Фильтры -->
+                            <TextBlock Text="Фильтры" FontWeight="Bold" Margin="0,0,0,16"/>
+                            <Button x:Name="BrandFilterButton" Content="Бренд" 
+                                    Padding="12,8" Margin="0,0,0,8" 
+                                    Background="#F3F4F6" 
+                                    Foreground="#1F2937"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Click="BrandFilterButton_Click"/>
+                            <Button x:Name="PriceFilterButton" Content="Цена" 
+                                    Padding="12,8" Margin="0,0,0,8" 
+                                    Background="#F3F4F6" 
+                                    Foreground="#1F2937"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Click="PriceFilterButton_Click"/>
+                            <Button x:Name="SaleFilterButton" Content="Акции" 
+                                    Padding="12,8" Margin="0,0,0,8" 
+                                    Background="#F3F4F6" 
+                                    Foreground="#1F2937"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    Click="SaleFilterButton_Click"/>
+                            <Button x:Name="ClearFilterButton" Content="Сбросить фильтры" 
+                                    Padding="12,8" Margin="0,16,0,0" 
+                                    Background="#EF4444" 
+                                    Foreground="White"
+                                    BorderThickness="0"
+                                    Cursor="Hand"
+                                    FontSize="12"
+                                    Click="ClearFilterButton_Click"
+                                    Visibility="Collapsed"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Правая панель: каталог -->
+                    <Grid Grid.Column="1" Margin="24,0,24,24">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <!-- Заголовок каталога -->
+                        <TextBlock Text="Каталог" FontSize="28" FontWeight="Bold" Margin="0,0,0,24"/>
+
+                        <!-- Сетка товаров -->
+                        <WrapPanel x:Name="ProductsPanel" Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Left">
+                            <!-- Товары будут загружаться динамически из базы данных -->
+                        </WrapPanel>
+                    </Grid>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
+

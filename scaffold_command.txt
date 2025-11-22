@@ -1,0 +1,12 @@
+Команда для генерации моделей из базы данных:
+
+Scaffold-DbContext "Data Source=имя_сервера;Initial Catalog=ispp2109;User Id=логин;Password=пароль;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -ContextDir Data -Context ApplicationDbContext -Tables CP_Categories,CP_OrderItems,CP_Orders,CP_Products,CP_Users -Force
+
+Замените:
+- имя_сервера - на имя вашего SQL Server
+- логин - на ваш логин для подключения к БД
+- пароль - на ваш пароль
+
+Пример для Windows Authentication:
+Scaffold-DbContext "Data Source=localhost;Initial Catalog=ispp2109;Integrated Security=True;TrustServerCertificate=True" Microsoft.EntityFrameworkCore.SqlServer -OutputDir Models -ContextDir Data -Context ApplicationDbContext -Tables CP_Categories,CP_OrderItems,CP_Orders,CP_Products,CP_Users -Force
+

@@ -1,0 +1,276 @@
+﻿<Window x:Class="Test1.Profile"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Test1"
+        mc:Ignorable="d"
+        Title="Профиль" Height="600" Width="1000"
+        WindowStartupLocation="CenterScreen">
+    <Grid Background="White">
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="300"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- Левая боковая панель -->
+                <Border Grid.Column="0" Background="White" BorderBrush="#E5E7EB" BorderThickness="0,0,1,0">
+                    <StackPanel Margin="24">
+                <!-- Заголовок профиля -->
+                <TextBlock Text="Мой профиль" 
+                           FontSize="20" 
+                           FontWeight="Bold" 
+                           Foreground="#1F2937" 
+                           Margin="0,0,0,24"/>
+
+                <!-- Изображение профиля -->
+                <Border Width="120" Height="120" 
+                        HorizontalAlignment="Left"
+                        Margin="0,0,0,16">
+                    <Grid>
+                        <Ellipse Fill="#F3F4F6" Stroke="#D1D5DB" StrokeThickness="2">
+                            <Ellipse.Effect>
+                                <DropShadowEffect BlurRadius="4" ShadowDepth="2" Opacity="0.1"/>
+                            </Ellipse.Effect>
+                        </Ellipse>
+                        <!-- Иконка камеры -->
+                        <Border Width="32" Height="32" 
+                                Background="#3B82F6" 
+                                CornerRadius="16"
+                                HorizontalAlignment="Right" 
+                                VerticalAlignment="Bottom"
+                                Margin="0,0,-4,-4"
+                                Cursor="Hand">
+                            <TextBlock Text="📷" 
+                                       FontSize="16" 
+                                       HorizontalAlignment="Center" 
+                                       VerticalAlignment="Center"/>
+                        </Border>
+                    </Grid>
+                </Border>
+
+                <!-- Имя пользователя -->
+                <TextBlock x:Name="UserNameText" 
+                           Text="Анна Петрова" 
+                           FontSize="18" 
+                           FontWeight="Bold" 
+                           Foreground="#1F2937" 
+                           Margin="0,0,0,4"/>
+
+                <!-- Email пользователя -->
+                <TextBlock x:Name="UserEmailText" 
+                           Text="anna@example.com" 
+                           FontSize="14" 
+                           Foreground="#6B7280" 
+                           Margin="0,0,0,32"/>
+
+                <!-- Меню навигации -->
+                <StackPanel>
+                    <!-- Мои данные -->
+                    <Border x:Name="MyDataMenuItem" 
+                            Background="#F3F4F6" 
+                            BorderBrush="#3B82F6" 
+                            BorderThickness="3,0,0,0"
+                            Padding="12,12"
+                            Margin="0,0,0,8"
+                            Cursor="Hand"
+                            MouseDown="MyDataMenuItem_MouseDown">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="MyDataIcon" Text="👤" FontSize="16" Margin="0,0,12,0"/>
+                            <TextBlock x:Name="MyDataText" 
+                                       Text="Мои данные" 
+                                       FontSize="14" 
+                                       FontWeight="SemiBold" 
+                                       Foreground="#1F2937"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Мои заказы -->
+                    <Border x:Name="MyOrdersMenuItem" 
+                            Background="Transparent" 
+                            Padding="12,12"
+                            Margin="0,0,0,8"
+                            Cursor="Hand"
+                            MouseDown="MyOrdersMenuItem_MouseDown">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock x:Name="MyOrdersIcon" Text="🛍️" FontSize="16" Margin="0,0,12,0"/>
+                            <TextBlock x:Name="MyOrdersText" 
+                                       Text="Мои заказы" 
+                                       FontSize="14" 
+                                       Foreground="#6B7280"/>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- Выйти из аккаунта -->
+                    <Border Background="Transparent" 
+                            Padding="12,12"
+                            Cursor="Hand"
+                            MouseDown="LogoutMenuItem_MouseDown">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="→" FontSize="16" Margin="0,0,12,0" Foreground="#EF4444"/>
+                            <TextBlock Text="Выйти из аккаунта" 
+                                       FontSize="14" 
+                                       Foreground="#EF4444"/>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Правая область контента -->
+                <StackPanel Grid.Column="1" Margin="40">
+                <!-- Заголовок -->
+                <TextBlock Text="Мои данные" 
+                           FontSize="28" 
+                           FontWeight="Bold" 
+                           Foreground="#1F2937" 
+                           Margin="0,0,0,8"/>
+
+                <TextBlock Text="Управляйте своей личной информацией" 
+                           FontSize="14" 
+                           Foreground="#6B7280" 
+                           Margin="0,0,0,32"/>
+
+                <!-- Форма с данными -->
+                <StackPanel Width="500">
+                    <!-- Имя -->
+                    <TextBlock Text="Имя" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Foreground="#1F2937" 
+                               Margin="0,0,0,8"/>
+                    <TextBox x:Name="FirstNameTextBox" 
+                             FontSize="14" 
+                             Padding="12,10" 
+                             Margin="0,0,0,20"
+                             BorderBrush="#D1D5DB" 
+                             BorderThickness="1"
+                             Background="White"/>
+
+                    <!-- Фамилия -->
+                    <TextBlock Text="Фамилия" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Foreground="#1F2937" 
+                               Margin="0,0,0,8"/>
+                    <TextBox x:Name="LastNameTextBox" 
+                             FontSize="14" 
+                             Padding="12,10" 
+                             Margin="0,0,0,20"
+                             BorderBrush="#D1D5DB" 
+                             BorderThickness="1"
+                             Background="White"/>
+
+                    <!-- Email -->
+                    <TextBlock Text="Email" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Foreground="#1F2937" 
+                               Margin="0,0,0,8"/>
+                    <TextBox x:Name="EmailTextBox" 
+                             FontSize="14" 
+                             Padding="12,10" 
+                             Margin="0,0,0,8"
+                             BorderBrush="#D1D5DB" 
+                             BorderThickness="1"
+                             Background="White"/>
+                    <TextBlock Text="Для изменения email потребуется подтверждение" 
+                               FontSize="12" 
+                               Foreground="#6B7280" 
+                               Margin="0,0,0,20"/>
+
+                    <!-- Телефон -->
+                    <TextBlock Text="Телефон" 
+                               FontSize="14" 
+                               FontWeight="SemiBold" 
+                               Foreground="#1F2937" 
+                               Margin="0,0,0,8"/>
+                    <TextBox x:Name="PhoneTextBox" 
+                             FontSize="14" 
+                             Padding="12,10" 
+                             Margin="0,0,0,24"
+                             BorderBrush="#D1D5DB" 
+                             BorderThickness="1"
+                             Background="White"/>
+                    
+                    <!-- Кнопка сохранения -->
+                    <Button x:Name="SaveButton"
+                            Content="Сохранить изменения" 
+                            Background="#3B82F6" 
+                            Foreground="White" 
+                            FontSize="16" 
+                            FontWeight="SemiBold" 
+                            Padding="16,12" 
+                            Cursor="Hand"
+                            Click="SaveButton_Click"/>
+                </StackPanel>
+                </StackPanel>
+            </Grid>
+            </ScrollViewer>
+
+            <!-- Панель входа (скрыта после входа) -->
+            <Border x:Name="LoginPanel" 
+                    Grid.ColumnSpan="2"
+                    Background="White"
+                    Visibility="Collapsed">
+                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="400">
+                <TextBlock Text="Вход в аккаунт" 
+                           FontSize="24" 
+                           FontWeight="Bold" 
+                           Foreground="#1F2937" 
+                           HorizontalAlignment="Center" 
+                           Margin="0,0,0,32"/>
+                    
+                <TextBlock Text="Имя пользователя:" 
+                           FontSize="14" 
+                           Foreground="#6B7280" 
+                           Margin="0,0,0,8"/>
+                <TextBox x:Name="UsernameTextBox" 
+                         FontSize="14" 
+                         Padding="12,8" 
+                         Margin="0,0,0,16"
+                         BorderBrush="#D1D5DB" 
+                         BorderThickness="1"/>
+                    
+                <TextBlock Text="Пароль:" 
+                           FontSize="14" 
+                           Foreground="#6B7280" 
+                           Margin="0,0,0,8"/>
+                <PasswordBox x:Name="PasswordBox" 
+                             FontSize="14" 
+                             Padding="12,8" 
+                             Margin="0,0,0,24"
+                             BorderBrush="#D1D5DB" 
+                             BorderThickness="1"/>
+                    
+                <Button Content="Войти" 
+                        Background="#3B82F6" 
+                        Foreground="White" 
+                        FontSize="16" 
+                        FontWeight="SemiBold" 
+                        Padding="16,12" 
+                        Cursor="Hand"
+                        Margin="0,0,0,12"
+                        Click="LoginButton_Click"/>
+                    
+                <Button Content="Регистрация" 
+                        Background="#10B981" 
+                        Foreground="White" 
+                        FontSize="16" 
+                        FontWeight="SemiBold" 
+                        Padding="16,12" 
+                        Cursor="Hand"
+                        Click="RegisterButton_Click"/>
+                    
+                <TextBlock x:Name="ErrorMessage" 
+                           Foreground="Red" 
+                           FontSize="12" 
+                           Margin="0,16,0,0" 
+                           TextWrapping="Wrap"
+                           Visibility="Collapsed"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</Window>

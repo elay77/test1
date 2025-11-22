@@ -1,0 +1,79 @@
+<Window x:Class="Test1.CartWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Test1"
+        mc:Ignorable="d"
+        Title="Корзина" Height="600" Width="900">
+    <Grid>
+        <!-- Основной контейнер -->
+        <Border BorderBrush="#3B82F6" BorderThickness="2" CornerRadius="8" Margin="16">
+            <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                <Grid>
+                    <!-- Верхняя панель -->
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left" Margin="24,16,0,0">
+                        <TextBlock Text="Главная страница / Корзина" Foreground="#3B82F6" FontSize="14" FontWeight="SemiBold"/>
+                    </StackPanel>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,16,24,0">
+                        <Button Content="На главную" 
+                                Background="#1F2937" Foreground="White" 
+                                Padding="16,8" Margin="0,0,8,0"
+                                FontSize="14" FontWeight="SemiBold" 
+                                Cursor="Hand"
+                                Click="BackToMainButton_Click" />
+                    </StackPanel>
+
+                    <!-- Основной контент -->
+                    <Grid Margin="0,50,0,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <!-- Заголовок -->
+                    <TextBlock Text="Корзина" FontSize="28" FontWeight="Bold" Margin="24,0,24,24" Grid.Row="0"/>
+
+                    <!-- Список товаров -->
+                    <StackPanel x:Name="CartItemsPanel" Grid.Row="1" Margin="24,0,24,24">
+                        <!-- Товары будут загружаться динамически -->
+                    </StackPanel>
+
+                    <!-- Итоговая панель -->
+                    <Border Grid.Row="2" Background="#F3F4F6" Padding="24" CornerRadius="8" Margin="24,0,24,24">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <StackPanel Grid.Column="0">
+                                <TextBlock x:Name="TotalItemsText" Text="Товаров: 0" FontSize="16" FontWeight="SemiBold" Margin="0,0,0,8"/>
+                                <TextBlock x:Name="TotalPriceText" Text="Итого: 0 ₽" FontSize="24" FontWeight="Bold" Foreground="#3B82F6"/>
+                            </StackPanel>
+
+                            <StackPanel Grid.Column="1" Orientation="Horizontal">
+                                <Button Content="Очистить корзину" 
+                                        Background="#EF4444" Foreground="White" 
+                                        Padding="16,8" Margin="0,0,8,0"
+                                        FontSize="14" FontWeight="SemiBold" 
+                                        Cursor="Hand"
+                                        Click="ClearCartButton_Click" />
+                                <Button Content="Оформить заказ" 
+                                        Background="#10B981" Foreground="White" 
+                                        Padding="24,8"
+                                        FontSize="16" FontWeight="SemiBold" 
+                                        Cursor="Hand"
+                                        Click="CheckoutButton_Click" />
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+                    </Grid>
+                </Grid>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</Window>
+
