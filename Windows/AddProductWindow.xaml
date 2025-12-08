@@ -22,17 +22,17 @@
                     </Style>
                 </StackPanel.Resources>
                 <TextBlock Text="Название" FontWeight="SemiBold"/>
-                <TextBox x:Name="NameTextBox" Padding="10" FontSize="14" />
+                <TextBox x:Name="NameTextBox" Padding="10" FontSize="14" MaxLength="255"/>
 
                 <TextBlock Text="Описание" FontWeight="SemiBold"/>
                 <TextBox x:Name="DescriptionTextBox" Padding="10" FontSize="14" TextWrapping="Wrap" AcceptsReturn="True" Height="90"/>
 
                 <TextBlock Text="Цена (₽)" FontWeight="SemiBold"/>
-                <TextBox x:Name="PriceTextBox" Padding="10" FontSize="14" />
+                <TextBox x:Name="PriceTextBox" Padding="10" FontSize="14" MaxLength="15"/>
 
 
                 <TextBlock Text="Рейтинг (0-5, опционально)" FontWeight="SemiBold"/>
-                <TextBox x:Name="RatingTextBox" Padding="10" FontSize="14" />
+                <TextBox x:Name="RatingTextBox" Padding="10" FontSize="14" MaxLength="3"/>
 
                 <TextBlock Text="Ссылка на изображение (опционально)" FontWeight="SemiBold"/>
                 <Grid>

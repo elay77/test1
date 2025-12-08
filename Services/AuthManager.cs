@@ -30,6 +30,7 @@ namespace Test1.Services
         public static string Phone => _phone ?? string.Empty; // Телефон
         public static string Role => _role ?? string.Empty; // Роль пользователя
         public static bool IsAdmin => string.Equals(_role, "admin", StringComparison.OrdinalIgnoreCase);
+        public static bool IsManager => string.Equals(_role, "manager", StringComparison.OrdinalIgnoreCase);
 
         /// <summary>
         /// Получает имя пользователя из полного имени

@@ -9,6 +9,9 @@ using System.IO;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
+using System.ComponentModel;
+using System.Windows.Data;
+using Microsoft.Win32;
 using Test1.Services;
 using Test1.Data;
 using Test1.Models;
@@ -385,6 +388,18 @@ namespace Test1
                 EmailTextBox.Text = AuthManager.Email;
                 PhoneTextBox.Text = AuthManager.Phone;
 
+                // Показываем кнопку управления заказами, если пользователь - админ или менеджер
+                // (в текущей реализации проверяем только на админа, так как роли менеджера пока нет в AuthManager, но в БД роль "manager" может быть)
+                // Добавим проверку на роль из AuthManager если бы она там была публичной, но пока проверим через IsAdmin
+                // Если нужно расширить на менеджеров, нужно обновить AuthManager
+                
+                // Проверяем роль напрямую из БД или добавляем свойство в AuthManager
+                // Пока используем IsAdmin как заглушку для "сотрудников"
+                bool canManageOrders = AuthManager.IsAdmin || AuthManager.IsManager;
+                // Если в AuthManager будет свойство Role, можно проверить: AuthManager.Role == "admin" || AuthManager.Role == "manager"
+                
+                ManageOrdersMenuItem.Visibility = canManageOrders ? Visibility.Visible : Visibility.Collapsed;
+
                 SelectMenuItem(MyDataMenuItem);
             }
             else
@@ -393,11 +408,13 @@ namespace Test1
                 ErrorMessage.Visibility = Visibility.Collapsed;
                 UsernameTextBox.Clear();
                 PasswordBox.Clear();
+                ManageOrdersMenuItem.Visibility = Visibility.Collapsed;
             }
         }
 
         private void SelectMenuItem(Border menuItem)
         {
+            // Сброс стилей всех пунктов
             MyDataMenuItem.Background = Brushes.Transparent;
             MyDataMenuItem.BorderBrush = Brushes.Transparent;
             MyDataMenuItem.BorderThickness = new Thickness(0);
@@ -410,6 +427,13 @@ namespace Test1
             MyOrdersText.FontWeight = FontWeights.Normal;
             MyOrdersText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6B7280"));
 
+            ManageOrdersMenuItem.Background = Brushes.Transparent;
+            ManageOrdersMenuItem.BorderBrush = Brushes.Transparent;
+            ManageOrdersMenuItem.BorderThickness = new Thickness(0);
+            ManageOrdersText.FontWeight = FontWeights.Normal;
+            ManageOrdersText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#6B7280"));
+
+            // Выделение активного пункта
             menuItem.Background = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#F3F4F6"));
             menuItem.BorderBrush = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#3B82F6"));
             menuItem.BorderThickness = new Thickness(3, 0, 0, 0);
@@ -423,6 +447,254 @@ namespace Test1
             {
                 MyOrdersText.FontWeight = FontWeights.SemiBold;
                 MyOrdersText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1F2937"));
+            }
+            else if (menuItem == ManageOrdersMenuItem)
+            {
+                ManageOrdersText.FontWeight = FontWeights.SemiBold;
+                ManageOrdersText.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#1F2937"));
+            }
+        }
+
+        private void ManageOrdersMenuItem_MouseDown(object sender, MouseButtonEventArgs e)
+        {
+            SelectMenuItem(ManageOrdersMenuItem);
+            ShowManageOrdersPanel();
+        }
+
+        private void ShowManageOrdersPanel()
+        {
+            LoadAllOrders();
+            CatalogGrid.Visibility = Visibility.Collapsed;
+            ProductDetailGrid.Visibility = Visibility.Collapsed;
+            OrdersGrid.Visibility = Visibility.Collapsed;
+            CartGrid.Visibility = Visibility.Collapsed;
+            ProfileGrid.Visibility = Visibility.Collapsed;
+            ManageOrdersGrid.Visibility = Visibility.Visible;
+
+            // Настройка видимости кнопок в зависимости от роли
+            // Менеджеры могут закрывать заказы, но не могут удалять их
+            DeleteOrderButton.Visibility = AuthManager.IsAdmin ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void BackToProfileFromManageOrdersButton_Click(object sender, RoutedEventArgs e)
+        {
+            ManageOrdersGrid.Visibility = Visibility.Collapsed;
+            ProfileGrid.Visibility = Visibility.Visible;
+            SelectMenuItem(MyDataMenuItem); // Возвращаемся на вкладку "Мои данные"
+        }
+
+        private void RefreshManageOrdersButton_Click(object sender, RoutedEventArgs e)
+        {
+            LoadAllOrders();
+        }
+
+        private void LoadAllOrders()
+        {
+            ManageOrdersList.ItemsSource = null;
+            ManageOrdersEmptyText.Visibility = Visibility.Collapsed;
+
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    // Загружаем все заказы, включая информацию о пользователе
+                    // Используем Include, но так как это старый EF Core, может потребоваться явная загрузка
+                    // В данном проекте используем ленивую загрузку или явную выборку
+                    
+                    var orders = context.CpOrders
+                        .OrderByDescending(o => o.CreatedAt)
+                        .ToList(); // Сначала получаем список заказов
+
+                    if (orders.Count == 0)
+                    {
+                        ManageOrdersEmptyText.Text = "Заказов нет";
+                        ManageOrdersEmptyText.Visibility = Visibility.Visible;
+                        return;
+                    }
+
+                    var orderDisplays = new List<AdminOrderDisplay>();
+
+                    foreach (var order in orders)
+                    {
+                        // Загружаем пользователя
+                        var user = context.CpUsers.FirstOrDefault(u => u.UserId == order.UserId);
+                        string clientName = user != null ? (user.FullName ?? user.Username) : "Неизвестный";
+
+                        // Загружаем товары заказа
+                        var items = context.CpOrderItems.Where(i => i.OrderId == order.OrderId).ToList();
+                        var productNames = new List<string>();
+                        
+                        foreach (var item in items)
+                        {
+                            var product = context.CpProducts.FirstOrDefault(p => p.ProductId == item.ProductId);
+                            string pName = product?.Name ?? $"Товар #{item.ProductId}";
+                            productNames.Add($"{pName} (x{item.Quantity})");
+                        }
+
+                        string productsSummary = string.Join(", ", productNames);
+                        if (productsSummary.Length > 100) 
+                            productsSummary = productsSummary.Substring(0, 97) + "...";
+
+                        orderDisplays.Add(new AdminOrderDisplay
+                        {
+                            OrderId = order.OrderId,
+                            ClientName = clientName,
+                            CreatedAt = order.CreatedAt,
+                            DateText = order.CreatedAt?.ToString("dd.MM.yyyy HH:mm") ?? "-",
+                            TotalAmount = order.TotalAmount,
+                            TotalAmountText = $"{order.TotalAmount:N0} ₽",
+                            Status = order.Status ?? "new",
+                            ProductsSummary = productsSummary
+                        });
+                    }
+
+                    ManageOrdersList.ItemsSource = orderDisplays;
+                }
+            }
+            catch (Exception ex)
+            {
+                ManageOrdersEmptyText.Text = $"Ошибка: {ex.Message}";
+                ManageOrdersEmptyText.Visibility = Visibility.Visible;
+            }
+        }
+
+        private class AdminOrderDisplay
+        {
+            public int OrderId { get; set; }
+            public string ClientName { get; set; } = string.Empty;
+            public DateTime? CreatedAt { get; set; }
+            public string DateText { get; set; } = string.Empty;
+            public decimal TotalAmount { get; set; }
+            public string TotalAmountText { get; set; } = string.Empty;
+            public string Status { get; set; } = string.Empty;
+            public string ProductsSummary { get; set; } = string.Empty;
+        }
+
+        private GridViewColumnHeader? _lastHeaderClicked = null;
+        private ListSortDirection _lastDirection = ListSortDirection.Ascending;
+
+        private void ManageOrdersListHeader_Click(object sender, RoutedEventArgs e)
+        {
+            var headerClicked = e.OriginalSource as GridViewColumnHeader;
+            ListSortDirection direction;
+
+            if (headerClicked != null)
+            {
+                if (headerClicked.Role != GridViewColumnHeaderRole.Padding)
+                {
+                    if (headerClicked != _lastHeaderClicked)
+                    {
+                        direction = ListSortDirection.Ascending;
+                    }
+                    else
+                    {
+                        if (_lastDirection == ListSortDirection.Ascending)
+                        {
+                            direction = ListSortDirection.Descending;
+                        }
+                        else
+                        {
+                            direction = ListSortDirection.Ascending;
+                        }
+                    }
+
+                    string header = headerClicked.Column.Header as string;
+                    string sortBy = header switch
+                    {
+                        "ID" => "OrderId",
+                        "Клиент" => "ClientName",
+                        "Дата" => "CreatedAt",
+                        "Сумма" => "TotalAmount",
+                        "Статус" => "Status",
+                        "Товары" => "ProductsSummary",
+                        _ => null
+                    };
+
+                    if (string.IsNullOrEmpty(sortBy)) return;
+
+                    Sort(sortBy, direction);
+
+                    _lastHeaderClicked = headerClicked;
+                    _lastDirection = direction;
+                }
+            }
+        }
+
+        private void Sort(string sortBy, ListSortDirection direction)
+        {
+            ICollectionView dataView = CollectionViewSource.GetDefaultView(ManageOrdersList.ItemsSource);
+            if (dataView != null)
+            {
+                dataView.SortDescriptions.Clear();
+                SortDescription sd = new SortDescription(sortBy, direction);
+                dataView.SortDescriptions.Add(sd);
+                dataView.Refresh();
+            }
+        }
+
+        private void CloseOrderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedOrder = ManageOrdersList.SelectedItem as AdminOrderDisplay;
+            if (selectedOrder == null)
+            {
+                MessageBox.Show("Выберите заказ для изменения статуса.", "Инфо", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var order = context.CpOrders.FirstOrDefault(o => o.OrderId == selectedOrder.OrderId);
+                    if (order != null)
+                    {
+                        order.Status = "closed";
+                        context.SaveChanges();
+                        LoadAllOrders();
+                        MessageBox.Show($"Заказ #{order.OrderId} закрыт.", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при закрытии заказа: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void DeleteOrderButton_Click(object sender, RoutedEventArgs e)
+        {
+            var selectedOrder = ManageOrdersList.SelectedItem as AdminOrderDisplay;
+            if (selectedOrder == null)
+            {
+                MessageBox.Show("Выберите заказ для удаления.", "Инфо", MessageBoxButton.OK, MessageBoxImage.Information);
+                return;
+            }
+
+            if (MessageBox.Show($"Вы уверены, что хотите полностью удалить заказ #{selectedOrder.OrderId}?", "Подтверждение удаления", MessageBoxButton.YesNo, MessageBoxImage.Warning) != MessageBoxResult.Yes)
+            {
+                return;
+            }
+
+            try
+            {
+                using (var context = new ApplicationDbContext())
+                {
+                    var order = context.CpOrders.FirstOrDefault(o => o.OrderId == selectedOrder.OrderId);
+                    if (order != null)
+                    {
+                        var items = context.CpOrderItems.Where(i => i.OrderId == order.OrderId);
+                        context.CpOrderItems.RemoveRange(items);
+                        
+                        context.CpOrders.Remove(order);
+                        context.SaveChanges();
+                        LoadAllOrders();
+                        MessageBox.Show($"Заказ #{order.OrderId} удален.", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при удалении заказа: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -1157,6 +1429,10 @@ namespace Test1
         /// </summary>
         private void UpdateAdminControls()
         {
+            // Элементы управления товарами (добавление, импорт, экспорт) видны только админу
+            AdminProductControls.Visibility = AuthManager.IsAdmin ? Visibility.Visible : Visibility.Collapsed;
+            
+            // Кнопка добавления внутри панели (для совместимости, если она используется отдельно)
             AddProductButton.Visibility = AuthManager.IsAdmin ? Visibility.Visible : Visibility.Collapsed;
         }
 
@@ -1384,6 +1660,170 @@ namespace Test1
             // Устанавливаем поисковый запрос и перезагружаем товары
             ProductFilter.SetSearchQuery(searchQuery);
             LoadProducts();
+        }
+
+        // --- Экспорт и Импорт (Excel / CSV) ---
+
+        private void ExportOrdersButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "CSV файл (Excel) (*.csv)|*.csv",
+                    FileName = $"Orders_Export_{DateTime.Now:yyyyMMdd_HHmm}.csv"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    var sb = new StringBuilder();
+                    // Заголовок CSV (разделитель - точка с запятой, стандарт для Excel в РФ)
+                    sb.AppendLine("ID Заказа;Клиент;Дата;Сумма;Статус;Товары");
+
+                    // Получаем данные из списка (предполагаем, что они уже загружены)
+                    if (ManageOrdersList.ItemsSource is IEnumerable<AdminOrderDisplay> orders)
+                    {
+                        foreach (var order in orders)
+                        {
+                            // Экранируем точки с запятой в данных, чтобы не сломать CSV
+                            string products = order.ProductsSummary.Replace(";", ",");
+                            string client = order.ClientName.Replace(";", ",");
+                            
+                            sb.AppendLine($"{order.OrderId};{client};{order.DateText};{order.TotalAmount:F2};{order.Status};{products}");
+                        }
+                    }
+
+                    // Сохраняем с кодировкой UTF8 + BOM (чтобы Excel правильно читал кириллицу)
+                    File.WriteAllText(saveFileDialog.FileName, sb.ToString(), new UTF8Encoding(true));
+                    MessageBox.Show("Заказы успешно экспортированы!", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при экспорте: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ExportProductsButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                var saveFileDialog = new SaveFileDialog
+                {
+                    Filter = "CSV файл (Excel) (*.csv)|*.csv",
+                    FileName = $"Products_Export_{DateTime.Now:yyyyMMdd}.csv"
+                };
+
+                if (saveFileDialog.ShowDialog() == true)
+                {
+                    using (var context = new ApplicationDbContext())
+                    {
+                        var products = context.CpProducts.ToList();
+                        var sb = new StringBuilder();
+                        
+                        // Заголовок
+                        sb.AppendLine("ID;Название;Цена;Описание;Изображение;Рейтинг;Активен");
+
+                        foreach (var p in products)
+                        {
+                            string name = p.Name?.Replace(";", ",") ?? "";
+                            string desc = p.Description?.Replace(";", ",").Replace("\n", " ").Replace("\r", "") ?? "";
+                            string img = p.ImageUrl ?? "";
+                            
+                            sb.AppendLine($"{p.ProductId};{name};{p.Price:F2};{desc};{img};{p.Rating:F1};{p.IsActive}");
+                        }
+
+                        File.WriteAllText(saveFileDialog.FileName, sb.ToString(), new UTF8Encoding(true));
+                        MessageBox.Show($"Экспортировано {products.Count} товаров!", "Успешно", MessageBoxButton.OK, MessageBoxImage.Information);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при экспорте: {ex.Message}", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
+        }
+
+        private void ImportProductsButton_Click(object sender, RoutedEventArgs e)
+        {
+            if (!AuthManager.IsAdmin) return;
+
+            try
+            {
+                var openFileDialog = new OpenFileDialog
+                {
+                    Filter = "CSV файл (Excel) (*.csv)|*.csv",
+                    Title = "Выберите файл для импорта товаров"
+                };
+
+                if (openFileDialog.ShowDialog() == true)
+                {
+                    var lines = File.ReadAllLines(openFileDialog.FileName);
+                    if (lines.Length < 2)
+                    {
+                        MessageBox.Show("Файл пуст или содержит только заголовок.", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Warning);
+                        return;
+                    }
+
+                    int addedCount = 0;
+                    using (var context = new ApplicationDbContext())
+                    {
+                        // Пропускаем первую строку (заголовок)
+                        for (int i = 1; i < lines.Length; i++)
+                        {
+                            var line = lines[i];
+                            if (string.IsNullOrWhiteSpace(line)) continue;
+
+                            var parts = line.Split(';');
+                            // Ожидаем минимум: Название;Цена (остальное опционально, но формат должен соблюдаться)
+                            // Формат ожидаемый: ID;Название;Цена;Описание;Изображение;Рейтинг;Активен
+                            // Если ID = 0 или пустой - создаем новый. Если ID есть - обновляем (опционально, здесь сделаем просто добавление новых для безопасности)
+                            
+                            if (parts.Length < 3) continue;
+
+                            // Индексы из ExportProductsButton_Click:
+                            // 0:ID, 1:Name, 2:Price, 3:Desc, 4:Img, 5:Rating, 6:Active
+                            
+                            string name = parts[1].Trim();
+                            if (string.IsNullOrEmpty(name)) continue;
+
+                            if (!decimal.TryParse(parts[2], out decimal price)) continue;
+                            
+                            string description = parts.Length > 3 ? parts[3] : null;
+                            string imageUrl = parts.Length > 4 ? parts[4] : null;
+                            
+                            decimal? rating = null;
+                            if (parts.Length > 5 && decimal.TryParse(parts[5], out decimal r)) rating = r;
+                            
+                            bool isActive = true;
+                            if (parts.Length > 6 && bool.TryParse(parts[6], out bool active)) isActive = active;
+
+                            var newProduct = new CpProduct
+                            {
+                                Name = name,
+                                Price = price,
+                                Description = description,
+                                ImageUrl = imageUrl,
+                                Rating = rating,
+                                IsActive = isActive,
+                                StockQuantity = 100 // Значение по умолчанию
+                            };
+
+                            context.CpProducts.Add(newProduct);
+                            addedCount++;
+                        }
+                        
+                        context.SaveChanges();
+                    }
+
+                    LoadProducts();
+                    MessageBox.Show($"Успешно импортировано {addedCount} товаров!", "Импорт завершен", MessageBoxButton.OK, MessageBoxImage.Information);
+                }
+            }
+            catch (Exception ex)
+            {
+                MessageBox.Show($"Ошибка при импорте: {ex.Message}\nУбедитесь, что формат файла CSV правильный (разделитель ';').", "Ошибка", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
     }
 }

@@ -11,7 +11,7 @@
                            FontSize="24" 
                            FontWeight="Bold" 
                            Foreground="#1F2937" 
-                           HorizontalAlignment="Center" 
+                           HorizontalAlignment="Left" 
                            Margin="0,0,0,32"/>
                 
                 <TextBlock Text="Имя пользователя:" 
@@ -23,7 +23,8 @@
                          Padding="12,8" 
                          Margin="0,0,0,16"
                          BorderBrush="#D1D5DB" 
-                         BorderThickness="1"/>
+                         BorderThickness="1"
+                         MaxLength="50"/>
                 
                 <TextBlock Text="Email:" 
                            FontSize="14" 
@@ -34,7 +35,8 @@
                          Padding="12,8" 
                          Margin="0,0,0,16"
                          BorderBrush="#D1D5DB" 
-                         BorderThickness="1"/>
+                         BorderThickness="1"
+                         MaxLength="100"/>
                 
                 <TextBlock Text="Пароль:" 
                            FontSize="14" 
@@ -45,7 +47,8 @@
                              Padding="12,8" 
                              Margin="0,0,0,16"
                              BorderBrush="#D1D5DB" 
-                             BorderThickness="1"/>
+                             BorderThickness="1"
+                             MaxLength="50"/>
                 
                 <TextBlock Text="Подтверждение пароля:" 
                            FontSize="14" 
@@ -56,7 +59,8 @@
                              Padding="12,8" 
                              Margin="0,0,0,16"
                              BorderBrush="#D1D5DB" 
-                             BorderThickness="1"/>
+                             BorderThickness="1"
+                             MaxLength="50"/>
                 
                 <TextBlock Text="Телефон (необязательно):" 
                            FontSize="14" 
@@ -67,7 +71,8 @@
                          Padding="12,8" 
                          Margin="0,0,0,24"
                          BorderBrush="#D1D5DB" 
-                         BorderThickness="1"/>
+                         BorderThickness="1"
+                         MaxLength="20"/>
                 
                 <Button Content="Зарегистрироваться" 
                         Background="#10B981" 

@@ -18,14 +18,31 @@
                         </StackPanel>
 
                         <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right" Margin="0,16,24,0">
-                            <Button x:Name="AddProductButton"
-                                    Content="Добавить товар"
-                                    Background="#3B82F6" Foreground="White"
-                                    Padding="16,8" Margin="0,0,8,0"
-                                    FontSize="14" FontWeight="SemiBold"
-                                    Cursor="Hand"
-                                    Visibility="Collapsed"
-                                    Click="AddProductButton_Click" />
+                            <!-- Кнопки управления товарами (Админ) -->
+                            <StackPanel x:Name="AdminProductControls" Orientation="Horizontal" Visibility="Collapsed">
+                                <Button Content="Импорт (Excel)"
+                                        Background="#10B981" Foreground="White"
+                                        Padding="12,8" Margin="0,0,8,0"
+                                        FontSize="14" FontWeight="SemiBold"
+                                        Cursor="Hand"
+                                        Click="ImportProductsButton_Click"
+                                        ToolTip="Загрузить товары из CSV файла"/>
+                                <Button Content="Экспорт (Excel)"
+                                        Background="#10B981" Foreground="White"
+                                        Padding="12,8" Margin="0,0,8,0"
+                                        FontSize="14" FontWeight="SemiBold"
+                                        Cursor="Hand"
+                                        Click="ExportProductsButton_Click"
+                                        ToolTip="Выгрузить товары в CSV файл"/>
+                                <Button x:Name="AddProductButton"
+                                        Content="Добавить товар"
+                                        Background="#3B82F6" Foreground="White"
+                                        Padding="16,8" Margin="0,0,8,0"
+                                        FontSize="14" FontWeight="SemiBold"
+                                        Cursor="Hand"
+                                        Click="AddProductButton_Click" />
+                            </StackPanel>
+
                             <Button Content="Корзина" 
                                     Background="#1F2937" Foreground="White" 
                                     Padding="16,8" Margin="0,0,8,0"
@@ -135,13 +152,19 @@
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
 
-                <Button Content="← Назад" 
-                        HorizontalAlignment="Left"
-                        Padding="12,8"
-                        Background="#F3F4F6" Foreground="#1F2937"
-                        FontSize="14" FontWeight="SemiBold"
-                        Cursor="Hand"
-                        Click="BackToCatalogButton_Click"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Left">
+                    <Button Content="← Назад" 
+                            Padding="12,8"
+                            Background="#F3F4F6" Foreground="#1F2937"
+                            FontSize="14" FontWeight="SemiBold"
+                            Cursor="Hand"
+                            Click="BackToCatalogButton_Click"/>
+                    <TextBlock Text="Карточка товара" 
+                               FontSize="18" FontWeight="Bold" 
+                               Foreground="#1F2937" 
+                               Margin="16,0,0,0" 
+                               VerticalAlignment="Center"/>
+                </StackPanel>
 
                 <StackPanel Orientation="Horizontal" Grid.Column="1">
                     <Button x:Name="DetailDeleteButton"
@@ -391,6 +414,22 @@
                                 </StackPanel>
                             </Border>
 
+                            <Border x:Name="ManageOrdersMenuItem"
+                                    Background="Transparent"
+                                    Padding="12,12"
+                                    Margin="0,0,0,8"
+                                    Cursor="Hand"
+                                    Visibility="Collapsed"
+                                    MouseDown="ManageOrdersMenuItem_MouseDown">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock x:Name="ManageOrdersIcon" Text="📋" FontSize="16" Margin="0,0,12,0"/>
+                                    <TextBlock x:Name="ManageOrdersText"
+                                               Text="Управление заказами"
+                                               FontSize="14"
+                                               Foreground="#6B7280"/>
+                                </StackPanel>
+                            </Border>
+
                             <Border Background="Transparent"
                                     Padding="12,12"
                                     Cursor="Hand"
@@ -432,7 +471,8 @@
                                      Margin="0,0,0,20"
                                      BorderBrush="#D1D5DB"
                                      BorderThickness="1"
-                                     Background="White"/>
+                                     Background="White"
+                                     MaxLength="50"/>
 
                             <TextBlock Text="Фамилия"
                                        FontSize="14"
@@ -445,7 +485,8 @@
                                      Margin="0,0,0,20"
                                      BorderBrush="#D1D5DB"
                                      BorderThickness="1"
-                                     Background="White"/>
+                                     Background="White"
+                                     MaxLength="50"/>
 
                             <TextBlock Text="Email"
                                        FontSize="14"
@@ -458,7 +499,8 @@
                                      Margin="0,0,0,8"
                                      BorderBrush="#D1D5DB"
                                      BorderThickness="1"
-                                     Background="White"/>
+                                     Background="White"
+                                     MaxLength="100"/>
                             <TextBlock Text="Для изменения email потребуется подтверждение"
                                        FontSize="12"
                                        Foreground="#6B7280"
@@ -475,7 +517,8 @@
                                      Margin="0,0,0,24"
                                      BorderBrush="#D1D5DB"
                                      BorderThickness="1"
-                                     Background="White"/>
+                                     Background="White"
+                                     MaxLength="20"/>
 
                             <StackPanel Orientation="Horizontal" Margin="0,0,0,0">
                                 <Button x:Name="SaveButton"
@@ -517,13 +560,20 @@
                         Grid.ColumnSpan="2"
                         Background="White"
                         Visibility="Collapsed">
-                    <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="420">
-                        <TextBlock Text="Вход в аккаунт"
-                                   FontSize="24"
-                                   FontWeight="Bold"
-                                   Foreground="#1F2937"
-                                   HorizontalAlignment="Center"
-                                   Margin="0,0,0,32"/>
+                    <Grid>
+                        <TextBlock Text="Авторизация" 
+                                   FontSize="20" FontWeight="Bold" 
+                                   Foreground="#1F2937" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Top"
+                                   Margin="24"/>
+                        
+                        <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Width="420">
+                            <TextBlock Text="Вход в аккаунт"
+                                       FontSize="24"
+                                       FontWeight="Bold"
+                                       Foreground="#1F2937"
+                                       HorizontalAlignment="Left"
+                                       Margin="0,0,0,32"/>
 
                         <TextBlock Text="Имя пользователя:"
                                    FontSize="14"
@@ -534,7 +584,8 @@
                                  Padding="12,8"
                                  Margin="0,0,0,16"
                                  BorderBrush="#D1D5DB"
-                                 BorderThickness="1"/>
+                                 BorderThickness="1"
+                                 MaxLength="50"/>
 
                         <TextBlock Text="Пароль:"
                                    FontSize="14"
@@ -545,7 +596,8 @@
                                      Padding="12,8"
                                      Margin="0,0,0,8"
                                      BorderBrush="#D1D5DB"
-                                     BorderThickness="1"/>
+                                     BorderThickness="1"
+                                     MaxLength="50"/>
 
                         <TextBlock HorizontalAlignment="Right"
                                    Margin="0,0,0,24"
@@ -592,7 +644,8 @@
                                    Margin="0,16,0,0"
                                    TextWrapping="Wrap"
                                    Visibility="Collapsed"/>
-                    </StackPanel>
+                        </StackPanel>
+                    </Grid>
                 </Border>
             </Grid>
         </Grid>
@@ -673,6 +726,129 @@
                                VerticalAlignment="Center"
                                Foreground="#6B7280"
                                Visibility="Collapsed"/>
+                </Grid>
+            </Border>
+        </Grid>
+        <!-- Управление заказами (для менеджеров/админов) -->
+        <Grid x:Name="ManageOrdersGrid" Visibility="Collapsed" Background="#F9FAFB">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Верхняя панель -->
+            <Border Margin="16" Background="#111827" Padding="12" CornerRadius="8">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <Button Content="← Назад"
+                                HorizontalAlignment="Left"
+                                Padding="12,8"
+                                Background="#F3F4F6" Foreground="#1F2937"
+                                FontSize="14" FontWeight="SemiBold"
+                                Cursor="Hand"
+                                Click="BackToProfileFromManageOrdersButton_Click"/>
+                        <TextBlock Text="Управление заказами" FontSize="18" FontWeight="Bold" Foreground="White" Margin="12,0,0,0" VerticalAlignment="Center"/>
+                    </StackPanel>
+                    
+                    <StackPanel Orientation="Horizontal" Grid.Column="1">
+                        <Button Content="Экспорт в Excel" 
+                                Padding="12,8" Margin="0,0,8,0"
+                                Background="#10B981" Foreground="White"
+                                FontSize="14" FontWeight="SemiBold"
+                                Cursor="Hand"
+                                Click="ExportOrdersButton_Click"/>
+                        
+                        <Button Content="Обновить" 
+                                Padding="12,8"
+                                Background="#3B82F6" Foreground="White"
+                                FontSize="14" FontWeight="SemiBold"
+                                Cursor="Hand"
+                                Click="RefreshManageOrdersButton_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <Border Grid.Row="1" Margin="16" Background="White" BorderBrush="#E5E7EB" BorderThickness="1" CornerRadius="8" Padding="0">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Border Background="#1F2937" Padding="12" CornerRadius="8,8,0,0">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel>
+                                <TextBlock Text="Все заказы" FontSize="20" FontWeight="Bold" Foreground="White"/>
+                                <TextBlock Text="Список всех оформленных заказов" FontSize="12" Foreground="#D1D5DB"/>
+                            </StackPanel>
+                        </Grid>
+                    </Border>
+
+                    <ListView x:Name="ManageOrdersList"
+                              Grid.Row="1"
+                              BorderThickness="0"
+                              Background="White"
+                              AlternationCount="2"
+                              GridViewColumnHeader.Click="ManageOrdersListHeader_Click">
+                        <ListView.Resources>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Background" Value="White"/>
+                                <Setter Property="BorderThickness" Value="0,0,0,1"/>
+                                <Setter Property="BorderBrush" Value="#E5E7EB"/>
+                                <Setter Property="Padding" Value="8"/>
+                                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                                <Style.Triggers>
+                                    <Trigger Property="ItemsControl.AlternationIndex" Value="1">
+                                        <Setter Property="Background" Value="#F3F4F6"/>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.Resources>
+                        <ListView.View>
+                            <GridView>
+                                <GridViewColumn Header="ID" DisplayMemberBinding="{Binding OrderId}" Width="60"/>
+                                <GridViewColumn Header="Клиент" DisplayMemberBinding="{Binding ClientName}" Width="150"/>
+                                <GridViewColumn Header="Дата" DisplayMemberBinding="{Binding DateText}" Width="140"/>
+                                <GridViewColumn Header="Сумма" DisplayMemberBinding="{Binding TotalAmountText}" Width="100"/>
+                                <GridViewColumn Header="Статус" DisplayMemberBinding="{Binding Status}" Width="100"/>
+                                <GridViewColumn Header="Товары" DisplayMemberBinding="{Binding ProductsSummary}" Width="300"/>
+                            </GridView>
+                        </ListView.View>
+                    </ListView>
+                    <TextBlock x:Name="ManageOrdersEmptyText"
+                               Grid.Row="1"
+                               Text="Заказов нет"
+                               HorizontalAlignment="Center"
+                               VerticalAlignment="Center"
+                               Foreground="#6B7280"
+                               Visibility="Collapsed"/>
+                               
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="16">
+                         <Button x:Name="CloseOrderButton"
+                                 Content="Закрыть заказ"
+                                 Background="#F59E0B" Foreground="White"
+                                 Padding="16,8" Margin="0,0,8,0"
+                                 FontSize="14" FontWeight="SemiBold"
+                                 Cursor="Hand"
+                                 Click="CloseOrderButton_Click"/>
+                         <Button x:Name="DeleteOrderButton"
+                                 Content="Удалить заказ"
+                                 Background="#EF4444" Foreground="White"
+                                 Padding="16,8"
+                                 FontSize="14" FontWeight="SemiBold"
+                                 Cursor="Hand"
+                                 Click="DeleteOrderButton_Click"/>
+                    </StackPanel>
                 </Grid>
             </Border>
         </Grid>
