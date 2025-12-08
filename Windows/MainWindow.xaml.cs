@@ -1614,8 +1614,21 @@ namespace Test1
             // MessageBox.Show(message, "Фильтр", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
-        // Таймер для задержки поиска в реальном времени
         private System.Windows.Threading.DispatcherTimer? _searchTimer;
+
+        private void InitializeSearchTimer()
+        {
+            if (_searchTimer == null)
+            {
+                _searchTimer = new System.Windows.Threading.DispatcherTimer();
+                _searchTimer.Interval = TimeSpan.FromMilliseconds(500);
+                _searchTimer.Tick += (s, args) =>
+                {
+                    _searchTimer.Stop();
+                    PerformSearch();
+                };
+            }
+        }
 
         /// <summary>
         /// Обработчик изменения текста в поле поиска
@@ -1623,22 +1636,13 @@ namespace Test1
         /// </summary>
         private void SearchTextBox_TextChanged(object sender, System.Windows.Controls.TextChangedEventArgs e)
         {
-            // Останавливаем предыдущий таймер, если он есть (чтобы не делать лишние запросы)
-            if (_searchTimer != null)
+            if (_searchTimer == null)
             {
-                _searchTimer.Stop();
+                InitializeSearchTimer();
             }
 
-            // Создаем новый таймер с задержкой 500мс для поиска в реальном времени
-            // Это позволяет не делать запрос к БД при каждом нажатии клавиши
-            _searchTimer = new System.Windows.Threading.DispatcherTimer();
-            _searchTimer.Interval = TimeSpan.FromMilliseconds(500);
-            _searchTimer.Tick += (s, args) =>
-            {
-                _searchTimer.Stop();
-                PerformSearch(); // Выполняем поиск после задержки
-            };
-            _searchTimer.Start();
+            _searchTimer?.Stop();
+            _searchTimer?.Start();
         }
 
         /// <summary>
